@@ -17,6 +17,7 @@ int main()
 		a[i] = 1;
 		b[i] = 1;
 	}
+	// Este tipo de pragma faz a replicacao do trabalho
 	omp_set_num_threads(4);
 	#pragma omp parallel shared(a,b,n) private(temp,i) reduction(+:csum)
 	{
