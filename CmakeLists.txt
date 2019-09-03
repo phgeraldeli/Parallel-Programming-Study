@@ -1,0 +1,6 @@
+ke_minimum_required(VERSION 3.10)
+find_package(OpenMP)
+add_executable(exec main.c)
+if(OPENMP_CXX_FOUND)
+	target_link_libraries(exec PUBLIC OpenMP::OpenMP_CXX)
+endif()
