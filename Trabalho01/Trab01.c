@@ -1,9 +1,5 @@
-/*
- * #pragma omp for (paralelismo de dados)
- * #pragma omp sections (paralelismo funcional)
- * #pragma omp single (unica thread)
- *
- */
+//mpicc Trab01.c -o Trab01
+//mpirun -np 4 Trab01
 
 
 #include <stdio.h>
@@ -21,12 +17,13 @@ int main(int argc, char** argv)
 	int i,j,k,N;
 	N = SIZE;
 	MPI_Status status;
+    clock_t start = clock();
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&meu_rank);
 	MPI_Comm_size(MPI_COMM_WORLD,&np);
 
-    clock_t start = clock(); 
     
+ 
 
 	for(i = 0 ; i < SIZE; i++){
 		for(j = 0; j < SIZE; j++) {
@@ -49,33 +46,31 @@ int main(int argc, char** argv)
 	
 	if(meu_rank != master) {
 		for(i=meu_rank;i<N;i+=np){
+            //Data, Count, Datatype, destination, tag, comunicador
 			MPI_Send(C[i], SIZE, MPI_INT, master, tag, MPI_COMM_WORLD);
 		}
 	}else {
 		for(origem = 1; origem<np; origem++) {
 			for(j = origem;j < N;j += np){
+                //Data, Count, Datatype, origem, tag, comunicador, status
 				MPI_Recv(C[j], SIZE, MPI_INT, origem, tag, MPI_COMM_WORLD, &status);
 			}
 		}
 	
 
-    printf("\n");
-	for(i = 0; i < N; i++){
-		for(j = 0; j < N; j++){
-			printf("%d ", C[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
-	
-	clock_t end = clock(); 
-    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
-    printf("Durou %f segundos\n", seconds);
-	}
-
-
-    
-		
+        printf("\n");
+	    for(i = 0; i < N; i++){
+		    for(j = 0; j < N; j++){
+			    printf("%d ", C[i][j]);
+		    }
+		    printf("\n");
+	    }
+	    printf("\n");
+	    
+	    clock_t end = clock(); 
+        float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+        printf("Durou %f segundos\n", seconds);
+	}	
 	MPI_Finalize();
 	return 0;
 }

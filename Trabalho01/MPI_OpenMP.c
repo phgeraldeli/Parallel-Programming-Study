@@ -22,11 +22,12 @@ int main(int argc, char** argv)
 	int i,j,k,N;
 	N = SIZE;
 	MPI_Status status;
+    clock_t start = clock();
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&meu_rank);
 	MPI_Comm_size(MPI_COMM_WORLD,&np);
 
-    clock_t start = clock(); 
+ 
 
 	for(i = 0 ; i < SIZE; i++){
 		for(j = 0; j < SIZE; j++) {
@@ -42,13 +43,13 @@ int main(int argc, char** argv)
 
 	#pragma omp parallel shared(A,B,C,N) private(i,j,k)
 	#pragma omp for 
-		for(i = meu_rank; i < N; i+=np){
-			for(j = 0; j < N; j++){
-				for(k = 0; k < N; k++){
-				C[i][j] = C[i][j] + A[i][k] * A[k][j];
-			}
-		}
-	}
+	for(i = meu_rank; i < N; i+=np){
+		for(j = 0; j < N; j++){
+			for(k = 0; k < N; k++){
+			C[i][j] = C[i][j] + A[i][k] * A[k][j];
+		    }
+	    }
+    }
 	
 	if(meu_rank != master) {
 		for(i=meu_rank;i<N;i+=np){
@@ -61,17 +62,17 @@ int main(int argc, char** argv)
 			}
 		}
 
-    printf("\n");
-	for(i = 0; i < N; i++){
-		for(j = 0; j < N; j++){
-			printf("%d ", C[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
-    	clock_t end = clock(); 
-    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
-    printf("Durou %f segundos\n", seconds);
+        printf("\n");
+	    for(i = 0; i < N; i++){
+		    for(j = 0; j < N; j++){
+			    printf("%d ", C[i][j]);
+		    }
+		    printf("\n");
+	    }
+	    printf("\n");
+        clock_t end = clock(); 
+        float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+        printf("Durou %f segundos\n", seconds);
 	}
     
 		

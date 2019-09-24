@@ -1,7 +1,7 @@
 /*
  * 
  *  gcc divisaoThreads.c -o divisaoThreads -fopenmp
- * ./divisaoThreads.c
+ * ./divisaoThreads
  *	
  */
 
@@ -14,14 +14,13 @@
 #include <string.h>
 #include <time.h>
 
-#define SIZE 5
+#define SIZE 100
 int A[SIZE][SIZE], B[SIZE][SIZE], C[SIZE][SIZE];
 
 int main()
 {
 	int i,j,k,N;
 	N = SIZE;
-	omp_set_dynamic(0);
 	omp_set_num_threads(4);
 
 
@@ -33,9 +32,9 @@ int main()
 	#pragma omp for
 	for(i = 0 ; i < SIZE; i++){
 		for(j = 0; j < SIZE; j++) {
-			A[i][j] = 1;
-			B[i][j] = 1;
-			C[i][j] = 1;
+			A[i][j] = 2;
+			B[i][j] = 2;
+			C[i][j] = 0;
 		}
 	}
 
@@ -52,7 +51,6 @@ int main()
 	//Paralelizando Multiplicacao de matrizes
 	#pragma omp parallel shared(A,B,C,N) private(i,j,k)
 	#pragma omp for 
-	
 	for(i = 0; i < N; i++){
 		for( j = 0; j < N; j++) {
 			C[i][j] = 0.0;
