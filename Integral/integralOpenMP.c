@@ -1,12 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <omp.h>
+#include <time.h>
+
 main(int argc, char** argv) {
     int my_rank;
     int p; // número de processos
     float a=0.0, b=1.0; // intervalo a calcular
-    int n=1024; // número de trapezóides
+
+    //int n=256; // número de trapezóides
+    //int n=512; // número de trapezóides
+    //int n=1024; // número de trapezóides
+    int n=1024*1024; // número de trapezóides
+   //int n=1024*1024*1024; // número de trapezóides
+
     float h; // base do trapezóide
     float local_a, local_b; // intervalo local
     int local_n; // número de trapezóides local
-    float integral; // integral no meu intervalo
+    double integral; // integral no meu intervalo
     float total; // integral total
     int source; // remetente da integral
     int dest=0; // destino das integrais (nó 0)
@@ -15,6 +27,7 @@ main(int argc, char** argv) {
 
     float calcula(float local_a, float local_b,int local_n, float h);
     float f(float x);
+    clock_t start = clock();
     omp_set_num_threads(4);
 
       h = (b-a) / n;
@@ -26,12 +39,16 @@ main(int argc, char** argv) {
     
     int x=a;
     #pragma omp parallel for reduction(+:integral)
-    for(i=1;i<=n;i++){
+    for(i=1; i<n;i++){
         integral += (i/(double)n)*(i/(double)n);
     }
-    integral = integral * h;
-    //integral = integral * h;    
-    printf("Resultado: %f\n", integral);
+    integral = integral * h;  
+    integral += 1.0/(2*n);
+    total=integral;
+    printf("Resultado: %f\n", total);
+    clock_t end = clock();
+    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    printf("Durou %f segundos\n", seconds);
 
 }
 
@@ -46,6 +63,7 @@ float calcula(float local_a, float local_b,int local_n, float h) {
         integral += f(x);
     }
     integral *= h;
+
     return integral;
 }
 
