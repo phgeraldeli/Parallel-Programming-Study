@@ -1,5 +1,9 @@
 #include <stdio.h>
-#include <mpi.h> //usando a versão 4.0.1 do openmpi
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <mpi.h>
+
 void main(int argc, char** argv) {
     int my_rank;
     int p; // número de processos
@@ -13,6 +17,9 @@ void main(int argc, char** argv) {
     int source; // remetente da integral 
     int dest=0; // destino das integrais (nó 0)
     int tag=200; // tipo de mensagem (único)
+
+    clock_t start = clock();
+
     MPI_Status status;
     float calcula(float local_a, float local_b, int local_n, float h);
     int resto;
@@ -38,6 +45,9 @@ void main(int argc, char** argv) {
     MPI_Reduce(&integral, &total, 1, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
     if(my_rank == 0) printf("Resultado: %f\n", total);
     MPI_Finalize();
+    clock_t end = clock();
+	float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    printf("Durou %f segundos\n", seconds);
 }
 
 

@@ -1,9 +1,10 @@
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <omp.h>
+#include <string.h>
+#include <time.h>
 
 void main(int argc, char** argv) {
-    
     int my_rank;
     int p; // número de processos
     float a=0.0, b=1.0; // intervalo a calcular
@@ -36,8 +37,8 @@ void main(int argc, char** argv) {
     integral += 1.0/(2.0*n);
     printf("Resultado: %f\n", integral);
 
-    clock_t end = clock(); 
-    float seconds = (float)(end - start);
+    clock_t end = clock();
+	float seconds = (float)(end - start)/CLOCKS_PER_SEC;
     printf("Durou %f segundos\n", seconds);
 }
 
