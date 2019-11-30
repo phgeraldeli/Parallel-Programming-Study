@@ -1,10 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+<<<<<<< HEAD
 #include <string.h>
 #include <omp.h>
 #include <time.h>
 
 main(int argc, char** argv) {
+=======
+#include <omp.h>
+#include <string.h>
+#include <time.h>
+
+void main(int argc, char** argv) {
+>>>>>>> b69439c44b713859ea71686bef957c4aa1e77a46
     int my_rank;
     int p; // número de processos
     float a=0.0, b=1.0; // intervalo a calcular
@@ -30,15 +38,13 @@ main(int argc, char** argv) {
     clock_t start = clock();
     omp_set_num_threads(4);
 
-      h = (b-a) / n;
-//    local_n = n / p;
-//    local_a = a + my_rank * local_n * h;
-//    local_b = local_a + local_n * h;
+    h = (b-a) / n;
+    
     integral = 0.0;
-    //integral = ( f(a) + f(b) ) /2.0;
     
     int x=a;
     #pragma omp parallel for reduction(+:integral)
+<<<<<<< HEAD
     for(i=1; i<n;i++){
         integral += (i/(double)n)*(i/(double)n);
     }
@@ -49,7 +55,18 @@ main(int argc, char** argv) {
     clock_t end = clock();
     float seconds = (float)(end - start)/CLOCKS_PER_SEC;
     printf("Durou %f segundos\n", seconds);
+=======
+    for(i=1;i < n;i++){
+        integral += (i/(double)n)*(i/(double)n);
+    }
+    integral = integral * h;
+    integral += 1.0/(2.0*n);
+    printf("Resultado: %f\n", integral);
+>>>>>>> b69439c44b713859ea71686bef957c4aa1e77a46
 
+    clock_t end = clock();
+	float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    printf("Durou %f segundos\n", seconds);
 }
 
 float calcula(float local_a, float local_b,int local_n, float h) {
