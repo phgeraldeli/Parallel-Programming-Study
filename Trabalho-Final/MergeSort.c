@@ -17,75 +17,44 @@ void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
     }
 }
 
-// void merge(int arr[], int inicio, int meio, int fim) {
-//     // Define o tamanho do array da esquerda e da direita
-//     int n1 = meio - inicio + 1;
-//     int n2 = fim - meio;
-//     int esquerda[n1], direita[n2];
 
-    
-// }
-
-void merge(int arr[], int inicio, int meio, int fim) 
-{ 
-    int i, j, k; 
+void merge(int arr[], int inicio, int meio, int fim) {
     // Define o tamanho do array da esquerda e da direita
-    int n1 = meio - inicio + 1; 
-    int n2 =  fim - meio; 
-    int L[n1], R[n2]; 
-  
-    /* Percorre o array recebido colocando no auxiliar esquerda
-    *  todos os numeros a serem ordenados da parte anterior
-    */    
-    for (i = 0; i < n1; i++) 
-        L[i] = arr[inicio + i]; 
-        
-    /* Percorre o array recebido colocando no auxiliar esquerda
-    *  todos os numeros a serem ordenados da parte posterior
-    */    
-    for (j = 0; j < n2; j++) 
-        R[j] = arr[meio + 1+ j]; 
-  
-    i = 0;
-    j = 0;
-    k = inicio;
+    int tamEsquerda = meio - inicio + 1;
+    int tamDireita = fim - meio;
+    int esquerda[tamEsquerda], direita[tamDireita];
+    //Percorre o array recebido colocando nos auxiliares
+    for(int i = 0; i < tamEsquerda; i++) esquerda[i] = arr[inicio + 1];   
+    for(int i = 0; i < tamDireita; i++) direita[i] = arr[meio + 1+ i];   
+
     /*
     * Enquanto os 2 arrays tiverem numeros a serem contabilizados
     * percorra os mesmos.
     */
-    while (i < n1 && j < n2) 
-    { 
-        // Se o primeiro de L for menor que o primeiro de R coloca 
-        // o numero de L no array
-        if (L[i] <= R[j]) 
-        { 
-            arr[k] = L[i]; 
-            i++; 
-        } 
-        else // Caso contrário coloca o numero de R
-        { 
-            arr[k] = R[j]; 
-            j++; 
+    int i = 0,j = 0,atual = inicio;
+    while(i < tamEsquerda && j < tamDireita) {
+        if(esquerda[i] <= direita[j]){
+            arr[atual] = esquerda[i];
+            i++;
+        }else {
+            arr[atual] = direita[j];
+            j++;
         }
-        k++; 
-    } 
+        atual++;
+    }
     // No caso de 1 dos arrays forem totalmente percorridos
     // Todos os números do arary que sobrou são maiores
-    while (i < n1) 
-    { 
-        arr[k] = L[i]; 
-        i++; 
-        k++; 
-    } 
-  
-    while (j < n2) 
-    { 
-        arr[k] = R[j]; 
-        j++; 
-        k++; 
-    } 
-}   
-
+    while(i < tamEsquerda) {
+        arr[atual] = esquerda[i];
+        i++;
+        atual++;
+    }
+    while(j < tamDireita) {
+        arr[atual] = direita[j];
+        j++;
+        atual++;
+    }
+}
 
 // Ordena o array
 void mergeSort(int arr[], int inicio, int fim) 
@@ -105,8 +74,6 @@ void mergeSort(int arr[], int inicio, int fim)
     } 
 } 
   
-/* UTILITY FUNCTIONS */
-/* Function to print an array */
 void printArray(int A[], int size) 
 { 
     int i; 
