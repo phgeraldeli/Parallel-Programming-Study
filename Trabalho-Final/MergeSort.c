@@ -2,11 +2,11 @@
 #include <time.h>
 #include <stdio.h>
 
-
+// Define Tamanho do Array a ser ordenado
 #define SIZE 1024
-
 int arr[SIZE];
 
+//Gera números aleatórios preenchendo o array
 void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
     srand(time(NULL));
     int valor;
@@ -17,38 +17,60 @@ void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
     }
 }
 
-void merge(int arr[], int l, int m, int r) 
+// void merge(int arr[], int inicio, int meio, int fim) {
+//     // Define o tamanho do array da esquerda e da direita
+//     int n1 = meio - inicio + 1;
+//     int n2 = fim - meio;
+//     int esquerda[n1], direita[n2];
+
+    
+// }
+
+void merge(int arr[], int inicio, int meio, int fim) 
 { 
     int i, j, k; 
-    int n1 = m - l + 1; 
-    int n2 =  r - m; 
-  
+    // Define o tamanho do array da esquerda e da direita
+    int n1 = meio - inicio + 1; 
+    int n2 =  fim - meio; 
     int L[n1], R[n2]; 
   
+    /* Percorre o array recebido colocando no auxiliar esquerda
+    *  todos os numeros a serem ordenados da parte anterior
+    */    
     for (i = 0; i < n1; i++) 
-        L[i] = arr[l + i]; 
+        L[i] = arr[inicio + i]; 
+        
+    /* Percorre o array recebido colocando no auxiliar esquerda
+    *  todos os numeros a serem ordenados da parte posterior
+    */    
     for (j = 0; j < n2; j++) 
-        R[j] = arr[m + 1+ j]; 
+        R[j] = arr[meio + 1+ j]; 
   
-
     i = 0;
     j = 0;
-    k = l;
+    k = inicio;
+    /*
+    * Enquanto os 2 arrays tiverem numeros a serem contabilizados
+    * percorra os mesmos.
+    */
     while (i < n1 && j < n2) 
     { 
+        // Se o primeiro de L for menor que o primeiro de R coloca 
+        // o numero de L no array
         if (L[i] <= R[j]) 
         { 
             arr[k] = L[i]; 
             i++; 
         } 
-        else
+        else // Caso contrário coloca o numero de R
         { 
             arr[k] = R[j]; 
             j++; 
-        } 
+        }
         k++; 
     } 
-
+    // No caso de 1 dos arrays forem totalmente percorridos
+    // Todos os números do arary que sobrou são maiores
     while (i < n1) 
     { 
         arr[k] = L[i]; 
@@ -62,21 +84,24 @@ void merge(int arr[], int l, int m, int r)
         j++; 
         k++; 
     } 
-} 
-  
+}   
 
-void mergeSort(int arr[], int l, int r) 
+
+// Ordena o array
+void mergeSort(int arr[], int inicio, int fim) 
 { 
-    if (l < r) 
+    if (inicio < fim) 
     { 
+        // Define o meio do array
+        int meio = inicio+(fim-inicio)/2; 
+  
+        //Divide o array na metade anterior
+        mergeSort(arr, inicio, meio); 
+        //Divide o array na metade posterior
+        mergeSort(arr, meio+1, fim); 
 
-        int m = l+(r-l)/2; 
-  
- 
-        mergeSort(arr, l, m); 
-        mergeSort(arr, m+1, r); 
-  
-        merge(arr, l, m, r); 
+        //Faz o merge dos arrays
+        merge(arr, inicio, meio, fim); 
     } 
 } 
   
@@ -90,7 +115,6 @@ void printArray(int A[], int size)
     printf("\n"); 
 } 
   
-/* Driver program to test above functions */
 int main() 
 { 
     clock_t start = clock();
@@ -100,11 +124,10 @@ int main()
   
     mergeSort(arr, 0, arr_size - 1); 
   
-    printf("\nSorted array is \n"); 
-    printArray(arr, arr_size); 
-
     clock_t end = clock();
     float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    printf("\nArray ordenado: \n"); 
+    printArray(arr, arr_size); 
     printf("\nO Algoritmo Levou %f segundos\n", seconds);
     return 0; 
 } 
