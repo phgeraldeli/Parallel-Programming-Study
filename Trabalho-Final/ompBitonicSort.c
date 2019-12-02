@@ -23,11 +23,12 @@ void decendingSwap(int index1 , int index2 , int *arr)
 
 void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )     //form a increaseing or decreasing array when a bitonic input is given to the function
     {
+        
         if(dir == 1)
         {
             int counter = 0;                                                                    //counter to keep track of already swapped elements ,, parallelising this area results in poor performance due to overhead ,,need to fix
-            int meio = fim - inicio + 1;
-            for(int j = meio/2;j>0;j = j/2)
+            int numberOfElements = fim - inicio + 1;
+            for(int j = numberOfElements/2;j>0;j = j/2)
             {   counter =0;
                 for(int i = inicio ; i +j <= fim ; i++)
                 {
@@ -49,8 +50,8 @@ void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )   
         else                                                                                    //decending sort
         {
             int counter = 0;
-            int meio = fim - inicio + 1;
-            for(int j = meio/2;j>0;j = j/2)
+            int numberOfElements = fim - inicio + 1;
+            for(int j = numberOfElements/2;j>0;j = j/2)
             {   counter =0;
                 for(int i = inicio ; i <= (fim-j) ; i++)
                 {
@@ -73,11 +74,11 @@ void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )   
     }
 void bitonicSequenceGenerator(int inicio , int fim , int *ar)                         //generate a bitonic sequence  from a a random order
 {
-    int meio = fim - inicio +1;
-      for(int j = 2;j<=meio;j = j*2)
+    int numberOfElements = fim - inicio +1;
+      for(int j = 2;j<=numberOfElements;j = j*2)
             {   
-                #pragma omp parallel for                                                         //parallel implementation results in most performance gains here
-                for(int i=0;i<meio;i=i+j)
+                //#pragma omp parallel for                                                         //parallel implementation results in most performance gains here
+                for(int i=0;i<numberOfElements;i=i+j)
                 {
                  if(((i/j)%2) ==0)                                                               //extra computation results in drastically lower performance ,need to fix
                  {
@@ -113,7 +114,7 @@ void printArray(int *A, int size)
 } 
 
 // Define Tamanho do Array a ser ordenado
-#define SIZE 1024
+#define SIZE 8
 
 int main()                                                                                        //main driver function
 {   
@@ -124,9 +125,9 @@ int main()                                                                      
 
     int *ar = malloc(sizeof(int)*SIZE);
     GeraAleatorios(ar,SIZE,SIZE);
-    printArray(ar,SIZE);
+    // printArray(ar,SIZE);
     bitonicSequenceGenerator(0,SIZE-1,ar);
-    printArray(ar,SIZE);
+    // printArray(ar,SIZE);
     clock_t end = clock();
     float seconds = (float)(end - start)/CLOCKS_PER_SEC;
     printf("\nO Algoritmo Levou %f segundos\n", seconds);
