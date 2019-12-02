@@ -71,7 +71,7 @@ main() {
         pos 0 1 2 3 ascendente
         pos 4 5 6 7 descendente
     */
-    // bitonic_seq_Generator(tamSubparte, seq);
+    // bitonic_seq_Generator(tamSubparte, seq); Substuirá o for abaixo
     for (i = 2; i <= tamSubparte; i = 2 * i)
     {
         #pragma omp parallel for shared(i, seq) private(j)
@@ -149,12 +149,6 @@ void bitonic_sort_par(int start, int length, int *seq, int flag)
 
     if (length == 1)
         return;
-
-    if (length % 2 !=0 )
-    {
-        printf("The length of a (sub)sequence is not divided by 2.\n");
-        exit(0);
-    }
 
     split_length = length / 2;
 
