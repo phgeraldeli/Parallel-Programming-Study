@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<omp.h>
 #include <time.h>
 
 void ascendingSwap(int index1, int index2, int *arr) {
@@ -21,11 +20,11 @@ void decendingSwap(int index1 , int index2 , int *arr)
   }
 }
 
-void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )     //form a increaseing or decreasing array when a bitonic input is given to the function
+void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )    
     {
         if(dir == 1)
         {
-            int counter = 0;                                                                    //counter to keep track of already swapped elements ,, parallelising this area results in poor performance due to overhead ,,need to fix
+            int counter = 0;
             int meio = fim - inicio + 1;
             for(int j = meio/2;j>0;j = j/2)
             {   counter =0;
@@ -46,7 +45,7 @@ void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )   
                 }
             }
         }
-        else                                                                                    //decending sort
+        else 
         {
             int counter = 0;
             int meio = fim - inicio + 1;
@@ -71,15 +70,14 @@ void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )   
         }
     
     }
-void bitonicSequenceGenerator(int inicio , int fim , int *ar)                         //generate a bitonic sequence  from a a random order
+void bitonicSequenceGenerator(int inicio , int fim , int *ar)
 {
     int meio = fim - inicio +1;
       for(int j = 2;j<=meio;j = j*2)
             {   
-                #pragma omp parallel for                                                         //parallel implementation results in most performance gains here
                 for(int i=0;i<meio;i=i+j)
                 {
-                 if(((i/j)%2) ==0)                                                               //extra computation results in drastically lower performance ,need to fix
+                 if(((i/j)%2) ==0) 
                  {
                      bitonicSortFromBitonicSequence(i,i+j-1,1,ar);
                  }   
@@ -95,7 +93,7 @@ void bitonicSequenceGenerator(int inicio , int fim , int *ar)                   
 
 //Gera números aleatórios preenchendo o array
 void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
-    srand(time(NULL));
+    srand(time(NULL))   ;
     int valor;
 
     for (int i = 0; i < quantNumeros; i++){
@@ -115,12 +113,9 @@ void printArray(int *A, int size)
 // Define Tamanho do Array a ser ordenado
 #define SIZE 1024
 
-int main()                                                                                        //main driver function
+int main()
 {   
     clock_t start = clock();
-    omp_set_dynamic(0);                                                                          //disabled so that the os doesnt override the thread settings                                                     
-    int maxNumberOfThreads = omp_get_num_procs();                                                //gives number of logical cores
-    omp_set_num_threads(maxNumberOfThreads);                                                     //set the no of threads
 
     int *ar = malloc(sizeof(int)*SIZE);
     GeraAleatorios(ar,SIZE,SIZE);
