@@ -89,29 +89,29 @@ void mergeSort(int sub_arr[], int inicio, int fim, int max)
 int main(int argc, char** argv) 
 { 
     int rank;
-	int np;	
-	MPI_Init(&argc, &argv);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &np);
+    int np; 
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &np);
     clock_t start = clock();
     GeraAleatorios(arr, SIZE, SIZE);
 
     int arr_size = sizeof(arr)/sizeof(arr[0]);  
     int local_size = SIZE/np;
-	
+    
     int *sub_array = malloc(local_size * sizeof(int));
-	MPI_Scatter(arr, local_size, MPI_INT, sub_array, local_size, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Scatter(arr, local_size, MPI_INT, sub_array, local_size, MPI_INT, 0, MPI_COMM_WORLD);
     
     mergeSort(sub_array, 0, local_size - 1,-1); 
 
     int *sorted = NULL;
-	if(rank == 0) {
-		
-		sorted = malloc(SIZE * sizeof(int));
-		
-		}
-	
-	MPI_Gather(sub_array, local_size, MPI_INT, sorted, local_size, MPI_INT, 0, MPI_COMM_WORLD);
+    if(rank == 0) {
+        
+        sorted = malloc(SIZE * sizeof(int));
+        
+        }
+    
+    MPI_Gather(sub_array, local_size, MPI_INT, sorted, local_size, MPI_INT, 0, MPI_COMM_WORLD);
 
 
   
@@ -120,29 +120,23 @@ int main(int argc, char** argv)
         // printf("\nArray antes final merge: \n");
 
         // printArray(sorted, SIZE);
-			
-		// printf("\n");
-		// printf("\n");
+            
+        // printf("\n");
+        // printf("\n");
         
         mergeSort(sorted, 0, SIZE - 1,2); 
 
-        printf("\nArray ordenado: \n");
 
-        printArray(sorted, SIZE);
-			
-		printf("\n");
-		printf("\n");
-
-	    clock_t end = clock();
-	    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
-    	printf("\nO Algoritmo Levou %f segundos\n", seconds);
+        clock_t end = clock();
+        float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+        printf("%f\n", seconds);
 
     }
 
 
 
-	MPI_Barrier(MPI_COMM_WORLD);
-	MPI_Finalize();
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Finalize();
 
 
   

@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 // Define Tamanho do Array a ser ordenado
-#define SIZE 10
+#define SIZE 1024
 int arr[SIZE];
 
 //Gera números aleatórios preenchendo o array
@@ -72,29 +72,17 @@ void mergeSort(int arr[], int inicio, int fim)
     } 
 } 
   
-void printArray(int A[], int size) 
-{ 
-    int i; 
-    for (i=0; i < size; i++) 
-        printf("%d ", A[i]); 
-    printf("\n"); 
-} 
-  
+
 int main() 
 { 
     clock_t start = clock();
     GeraAleatorios(arr, SIZE, SIZE);
     int arr_size = sizeof(arr)/sizeof(arr[0]);
 
-    printf("arr_size: %d\n", arr_size);
-    printArray(arr, arr_size);
-
     mergeSort(arr, 0, arr_size - 1); 
 
     clock_t end = clock();
     float seconds = (float)(end - start)/CLOCKS_PER_SEC;
-    printf("\nArray ordenado: \n"); 
-    printArray(arr, arr_size); 
-    printf("\nO Algoritmo Levou %f segundos\n", seconds);
+    printf("%f\n", seconds);
     return 0; 
 } 

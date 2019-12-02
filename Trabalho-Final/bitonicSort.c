@@ -119,11 +119,11 @@ int main()
 
     int *ar = malloc(sizeof(int)*SIZE);
     GeraAleatorios(ar,SIZE,SIZE);
-    printArray(ar,SIZE);
+
     bitonicSequenceGenerator(0,SIZE-1,ar);
-    printArray(ar,SIZE);
+
     clock_t end = clock();
     float seconds = (float)(end - start)/CLOCKS_PER_SEC;
-    printf("\nO Algoritmo Levou %f segundos\n", seconds);
+    printf("%f\n", seconds);
 
 }
