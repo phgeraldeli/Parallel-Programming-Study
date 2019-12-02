@@ -2,8 +2,6 @@
 #include<stdlib.h>
 #include <time.h>
 
-#define MAX(A, B) (((A) > (B)) ? (A) : (B))
-#define MIN(A, B) (((A) > (B)) ? (B) : (A))
 #define UP 0
 #define DOWN 1
 #define SIZE 1024
@@ -43,15 +41,25 @@ main() {
 
     /*
         Do menor pro maior
-        0 1 2 3 4 5 6 7
+        9 6 7 4 4 8 7 6
         --> <-- --> <--  1 rodada
-
+        6 9 7 4 4 8 7 6
         ---->     <----  2 Rodada
-          ----> <----   
+          ----> <----
+        6 4 7 9 7 8 4 6
+        --> --> <-- <-- 3 Rodada
+        Temos:
+        4 6 7 9 8 7 4 6
+             -> <-
+           -       -
+        -            -
+        Geramos duas bitonic sequence com posições:
+        pos 0 1 2 3 ascendente
+        pos 4 5 6 7 descendente
     */
     for (i = 2; i <= tamSubparte; i = 2 * i)
     {
-#pragma omp parallel for shared(i, seq) private(j)
+        #pragma omp parallel for shared(i, seq) private(j)
         for (j = 0; j < n; j += i)
         {
             if ((j / i) % 2 == 0)
@@ -153,7 +161,7 @@ void bitonic_sort_par(int start, int length, int *seq, int flag)
 
     if (split_length > tamSubparte)
     {
-        // tamSubparte is the size of sub part-> n/numThreads
+        // tamSubparte -> n/numThreads
         bitonic_sort_par(start, split_length, seq, flag);
         bitonic_sort_par(start + split_length, split_length, seq, flag);
     }
