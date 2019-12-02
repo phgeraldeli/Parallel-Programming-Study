@@ -16,4 +16,3 @@ echo "merge MPI"
 mpicc mpiMergeSort.c -o mpiMerge.out
 mpirun -np 4 mpiMerge.out 1024 
 
-rm *.out
