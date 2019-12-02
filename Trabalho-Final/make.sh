@@ -5,12 +5,14 @@ gcc -o bitonic.out bitonicSort.c
 echo "bitonic OMP"
 export OMP_NUM_THREADS=4
 gcc -o ompBitonic.out ompBitonicSort.c -fopenmp 
-./ompBitonic.out
+./ompBitonic.out 
 
 echo "merge Normal"
 gcc -o merge.out mergeSort.c
-./merge.out
+./merge.out 
+
 
 echo "merge MPI"
 mpicc mpiMergeSort.c -o mpiMerge.out
-mpirun -np 4 mpiMerge.out 1024
+mpirun -np 4 mpiMerge.out 1024 
+

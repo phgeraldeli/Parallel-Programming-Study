@@ -1,102 +1,26 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<omp.h>
 #include <time.h>
 
-void ascendingSwap(int index1, int index2, int *arr) {
-    if(arr[index2] < arr[index1]) {
-        int temp = arr[index2];
-        arr[index2] = arr[index1];
-        arr[index1] = temp;
-    }
-}
+#define MAX(A, B) (((A) > (B)) ? (A) : (B))
+#define MIN(A, B) (((A) > (B)) ? (B) : (A))
+#define UP 0
+#define DOWN 1
+#define SIZE 1024
 
-void decendingSwap(int index1 , int index2 , int *arr)
-{
-  if(arr[index1] < arr[index2])
-  {
-      int temp = arr[index2];
-      arr[index2] = arr[index1];
-      arr[index1] = temp;
-  }
-}
+int tamSubparte;
 
-void bitonicSortFromBitonicSequence( int inicio ,int fim, int dir , int *ar )     //form a increaseing or decreasing array when a bitonic input is given to the function
+void printfArray(int* seq, int size) {
+    printf("[ %d,", seq[0]);
+    for (int i = 1; i < size; i++)
     {
-        
-        if(dir == 1)
-        {
-            int counter = 0;                                                                    //counter to keep track of already swapped elements ,, parallelising this area results in poor performance due to overhead ,,need to fix
-            int numberOfElements = fim - inicio + 1;
-            for(int j = numberOfElements/2;j>0;j = j/2)
-            {   counter =0;
-                for(int i = inicio ; i +j <= fim ; i++)
-                {
-                        if(counter < j)
-                        {
-                            ascendingSwap(i,i+j,ar);
-                            counter++;
-
-                        }
-                        else 
-                        {
-                            counter =0;
-                            i = i+ j-1;
-                            
-                        }
-                }
-            }
-        }
-        else                                                                                    //decending sort
-        {
-            int counter = 0;
-            int numberOfElements = fim - inicio + 1;
-            for(int j = numberOfElements/2;j>0;j = j/2)
-            {   counter =0;
-                for(int i = inicio ; i <= (fim-j) ; i++)
-                {
-                        if(counter < j)
-                        {
-                            decendingSwap(i,i+j,ar);
-                            counter++;
-
-                        }
-                        else 
-                        {
-                            counter =0;
-                            i = i+ j-1;
-                            
-                        }
-                }
-            }
-        }
-    
+        printf("%d, ", seq[i]);
     }
-void bitonicSequenceGenerator(int inicio , int fim , int *ar)                         //generate a bitonic sequence  from a a random order
-{
-    int numberOfElements = fim - inicio +1;
-      for(int j = 2;j<=numberOfElements;j = j*2)
-            {   
-                //#pragma omp parallel for                                                         //parallel implementation results in most performance gains here
-                for(int i=0;i<numberOfElements;i=i+j)
-                {
-                 if(((i/j)%2) ==0)                                                               //extra computation results in drastically lower performance ,need to fix
-                 {
-                     bitonicSortFromBitonicSequence(i,i+j-1,1,ar);
-                 }   
-                 else
-                 {
-                     bitonicSortFromBitonicSequence(i,i+j-1,0,ar);
-                 }
-                }
-            }
+    printf("%d]\n", seq[size-1]);
 }
 
-
-
-//Gera números aleatórios preenchendo o array
 void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
-    srand(time(NULL));
+    srand(time(NULL))   ;
     int valor;
 
     for (int i = 0; i < quantNumeros; i++){
@@ -105,31 +29,142 @@ void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
     }
 }
 
-void printArray(int *A, int size) 
-{ 
-    int i; 
-    for (i=0; i < size; i++) 
-        printf("%d ", A[i]); 
-    printf("\n"); 
-} 
+main() {
+    int i, j, n, numThreads, id;
+    int *seq;
 
-// Define Tamanho do Array a ser ordenado
-#define SIZE 8
+    n = SIZE;
+    seq = (int *) malloc (n * sizeof(int));
+    numThreads =  2;
+    tamSubparte = n / numThreads;
 
-int main()                                                                                        //main driver function
-{   
     clock_t start = clock();
-    omp_set_dynamic(0);                                                                          //disabled so that the os doesnt override the thread settings                                                     
-    int maxNumberOfThreads = omp_get_num_procs();                                                //gives number of logical cores
-    omp_set_num_threads(maxNumberOfThreads);                                                     //set the no of threads
+    GeraAleatorios(seq,n,n);
 
-    int *ar = malloc(sizeof(int)*SIZE);
-    GeraAleatorios(ar,SIZE,SIZE);
-    // printArray(ar,SIZE);
-    bitonicSequenceGenerator(0,SIZE-1,ar);
-    // printArray(ar,SIZE);
+    /*
+        Do menor pro maior
+        0 1 2 3 4 5 6 7
+        --> <-- --> <--  1 rodada
+
+        ---->     <----  2 Rodada
+          ----> <----   
+    */
+    for (i = 2; i <= tamSubparte; i = 2 * i)
+    {
+#pragma omp parallel for shared(i, seq) private(j)
+        for (j = 0; j < n; j += i)
+        {
+            if ((j / i) % 2 == 0)
+                bitonic_sort_seq(j, i, seq, UP);
+            else
+                bitonic_sort_seq(j, i, seq, DOWN);
+        }
+    }
+
+    for (i = 2; i <= numThreads; i = 2 * i)
+    {
+        for (j = 0; j < numThreads; j += i)
+        {
+            if ((j / i) % 2 == 0)
+                bitonic_sort_par(j*tamSubparte, i*tamSubparte, seq, UP);
+            else
+                bitonic_sort_par(j*tamSubparte, i*tamSubparte, seq, DOWN);
+        }
+#pragma omp parallel for shared(j)
+        for (j = 0; j < numThreads; j++)
+        {
+            if (j < i)
+                bitonic_sort_seq(j*tamSubparte, tamSubparte, seq, UP);
+            else
+                bitonic_sort_seq(j*tamSubparte, tamSubparte, seq, DOWN);
+        }
+    }
+
     clock_t end = clock();
-    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
-    printf("\nO Algoritmo Levou %f segundos\n", seconds);
 
+    printfArray(seq, n);
+    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    printf("%f\n", seconds);
+    free(seq);
+}
+
+
+void bitonic_sort_seq(int start, int length, int *seq, int flag)
+{
+
+    if (length == 1)
+        return;
+
+    int i;
+    int split_length;
+
+    split_length = length / 2;
+
+    // bitonic split
+    for (i = start; i < start + split_length; i++)
+    {
+        if (flag == UP)
+        {
+            if (seq[i] > seq[i + split_length])
+                swap(&seq[i], &seq[i + split_length]);
+        }
+        else
+        {
+            if (seq[i] < seq[i + split_length])
+                swap(&seq[i], &seq[i + split_length]);
+        }
+    }
+
+    bitonic_sort_seq(start, split_length, seq, flag);
+    bitonic_sort_seq(start + split_length, split_length, seq, flag);
+}
+
+void bitonic_sort_par(int start, int length, int *seq, int flag)
+{
+    int i;
+    int split_length;
+
+    if (length == 1)
+        return;
+
+    if (length % 2 !=0 )
+    {
+        printf("The length of a (sub)sequence is not divided by 2.\n");
+        exit(0);
+    }
+
+    split_length = length / 2;
+
+    // bitonic split
+#pragma omp parallel for shared(seq, flag, start, split_length) private(i)
+    for (i = start; i < start + split_length; i++)
+    {
+        if (flag == UP)
+        {
+            if (seq[i] > seq[i + split_length])
+                swap(&seq[i], &seq[i + split_length]);
+        }
+        else
+        {
+            if (seq[i] < seq[i + split_length])
+                swap(&seq[i], &seq[i + split_length]);
+        }
+    }
+
+    if (split_length > tamSubparte)
+    {
+        // tamSubparte is the size of sub part-> n/numThreads
+        bitonic_sort_par(start, split_length, seq, flag);
+        bitonic_sort_par(start + split_length, split_length, seq, flag);
+    }
+
+    return;
+}
+
+void swap(int *a, int *b)
+{
+    int t;
+    t = *a;
+    *a = *b;
+    *b = t;
 }
