@@ -132,12 +132,22 @@ int main(int argc, char** argv)
 			
 		printf("\n");
 		printf("\n");
+
+	    clock_t end = clock();
+	    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    	printf("\nO Algoritmo Levou %f segundos\n", seconds);
+
     }
 
-    clock_t end = clock();
-    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+
+
+	MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Finalize();
+
+
+  
     // printf("\nArray ordenado: \n"); 
     // printArray(arr, arr_size); 
-    // printf("\nO Algoritmo Levou %f segundos\n", seconds);
+
     return 0; 
 } 

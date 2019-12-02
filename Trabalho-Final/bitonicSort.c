@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<omp.h>
+#include <time.h>
 
 void ascendingSwap(int index1, int index2, int *arr) {
     if(arr[index2] < arr[index1]) {
@@ -112,10 +113,11 @@ void printArray(int *A, int size)
 } 
 
 // Define Tamanho do Array a ser ordenado
-#define SIZE 8
+#define SIZE 1024
 
 int main()                                                                                        //main driver function
 {   
+    clock_t start = clock();
     omp_set_dynamic(0);                                                                          //disabled so that the os doesnt override the thread settings                                                     
     int maxNumberOfThreads = omp_get_num_procs();                                                //gives number of logical cores
     omp_set_num_threads(maxNumberOfThreads);                                                     //set the no of threads
@@ -125,5 +127,8 @@ int main()                                                                      
     printArray(ar,SIZE);
     bitonicSequenceGenerator(0,SIZE-1,ar);
     printArray(ar,SIZE);
+    clock_t end = clock();
+    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    printf("\nO Algoritmo Levou %f segundos\n", seconds);
 
 }
