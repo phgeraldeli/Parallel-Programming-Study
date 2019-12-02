@@ -27,6 +27,20 @@ void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
     }
 }
 
+// void bitonic_seq_Generator(int tamSubparte, int* seq) {
+//     for (i = 2; i <= tamSubparte; i = 2 * i)
+//     {
+//         #pragma omp parallel for shared(i, seq) private(j)
+//         for (j = 0; j < n; j += i)
+//         {
+//             if ((j / i) % 2 == 0)
+//                 bitonic_sort_seq(j, i, seq, UP);
+//             else
+//                 bitonic_sort_seq(j, i, seq, DOWN);
+//         }
+//     }
+// }
+
 main() {
     int i, j, n, numThreads, id;
     int *seq;
@@ -57,6 +71,7 @@ main() {
         pos 0 1 2 3 ascendente
         pos 4 5 6 7 descendente
     */
+    // bitonic_seq_Generator(tamSubparte, seq);
     for (i = 2; i <= tamSubparte; i = 2 * i)
     {
         #pragma omp parallel for shared(i, seq) private(j)
