@@ -1,6 +1,3 @@
-for i in {1..10}; do commandNameHere; done
-
-
 echo "bitonic Normal"
 gcc -o bitonic.out bitonicSort.c 
 ./bitonic.out
