@@ -10,7 +10,7 @@ int tamSubparte;
 
 void printfArray(int* seq, int size) {
     printf("[ %d,", seq[0]);
-    for (int i = 1; i < size; i++)
+    for (int i = 1; i < size-1; i++)
     {
         printf("%d, ", seq[i]);
     }
@@ -27,19 +27,42 @@ void GeraAleatorios(int numero[], int quantNumeros, int Limite) {
     }
 }
 
-// void bitonic_seq_Generator(int tamSubparte, int* seq) {
-//     for (i = 2; i <= tamSubparte; i = 2 * i)
-//     {
-//         #pragma omp parallel for shared(i, seq) private(j)
-//         for (j = 0; j < n; j += i)
-//         {
-//             if ((j / i) % 2 == 0)
-//                 bitonic_sort_seq(j, i, seq, UP);
-//             else
-//                 bitonic_sort_seq(j, i, seq, DOWN);
-//         }
-//     }
-// }
+void bitonic_seq_Generator(int tamSubparte, int* seq) {
+    int j, i;
+    for (i = 2; i <= tamSubparte; i = 2 * i)
+    {
+        #pragma omp parallel for shared(i, seq) private(j)
+        for (j = 0; j < SIZE; j += i)
+        {
+            if ((j / i) % 2 == 0)
+                bitonic_sort_seq(j, i, seq, UP);
+            else
+                bitonic_sort_seq(j, i, seq, DOWN);
+        }
+    }
+}
+
+bitonicSortFromBitonicSequence(int numThreads, int *seq, int tamSubparte) {
+    int i,j;
+    for (i = 2; i <= numThreads; i = 2 * i)
+    {
+        for (j = 0; j < numThreads; j += i)
+        {
+            if ((j / i) % 2 == 0)
+                bitonic_sort_par(j*tamSubparte, i*tamSubparte, seq, UP);
+            else
+                bitonic_sort_par(j*tamSubparte, i*tamSubparte, seq, DOWN);
+        }
+        #pragma omp parallel for shared(j)
+        for (j = 0; j < numThreads; j++)
+        {
+            if (j < i)
+                bitonic_sort_seq(j*tamSubparte, tamSubparte, seq, UP);
+            else
+                bitonic_sort_seq(j*tamSubparte, tamSubparte, seq, DOWN);
+        }
+    }
+}
 
 main() {
     int i, j, n, numThreads, id;
@@ -71,40 +94,12 @@ main() {
         pos 0 1 2 3 ascendente
         pos 4 5 6 7 descendente
     */
-    // bitonic_seq_Generator(tamSubparte, seq); Substuirá o for abaixo
-    for (i = 2; i <= tamSubparte; i = 2 * i)
-    {
-        #pragma omp parallel for shared(i, seq) private(j)
-        for (j = 0; j < n; j += i)
-        {
-            if ((j / i) % 2 == 0)
-                bitonic_sort_seq(j, i, seq, UP);
-            else
-                bitonic_sort_seq(j, i, seq, DOWN);
-        }
-    }
-
-    for (i = 2; i <= numThreads; i = 2 * i)
-    {
-        for (j = 0; j < numThreads; j += i)
-        {
-            if ((j / i) % 2 == 0)
-                bitonic_sort_par(j*tamSubparte, i*tamSubparte, seq, UP);
-            else
-                bitonic_sort_par(j*tamSubparte, i*tamSubparte, seq, DOWN);
-        }
-#pragma omp parallel for shared(j)
-        for (j = 0; j < numThreads; j++)
-        {
-            if (j < i)
-                bitonic_sort_seq(j*tamSubparte, tamSubparte, seq, UP);
-            else
-                bitonic_sort_seq(j*tamSubparte, tamSubparte, seq, DOWN);
-        }
-    }
-
+    printf("Gerando Bitonic Sequence\nSequenciaBitonica: ");
+    bitonic_seq_Generator(tamSubparte, seq);
+    printfArray(seq, SIZE);
+    printf("Ordenando Sequencia Bitonica\nResultado: ");
+    bitonicSortFromBitonicSequence(numThreads, seq, tamSubparte);
     clock_t end = clock();
-
     printfArray(seq, n);
     float seconds = (float)(end - start)/CLOCKS_PER_SEC;
     printf("%f\n", seconds);
