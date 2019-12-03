@@ -8,6 +8,48 @@
 
 int tamSubparte;
 
+main() {
+    int i, j, n, numThreads, id;
+    int *seq;
+
+    n = SIZE;
+    seq = (int *) malloc (n * sizeof(int));
+    numThreads =  2;
+    tamSubparte = n / numThreads;
+
+    clock_t start = clock();
+    GeraAleatorios(seq,n,n);
+
+    /*
+        Do menor pro maior
+        9 6 7 4 4 8 7 6
+        --> <-- --> <--  1 rodada
+        6 9 7 4 4 8 7 6
+        ---->     <----  2 Rodada
+          ----> <----
+        6 4 7 9 7 8 4 6
+        --> --> <-- <-- 3 Rodada
+        Temos:
+        4 6 7 9 8 7 4 6
+             -> <-
+           -       -
+        -            -
+        Geramos duas bitonic sequence com posições:
+        pos 0 1 2 3 ascendente
+        pos 4 5 6 7 descendente
+    */
+    printf("Gerando Bitonic Sequence\nSequenciaBitonica: ");
+    bitonic_seq_Generator(tamSubparte, seq);
+    printfArray(seq, SIZE);
+    printf("Ordenando Sequencia Bitonica\nResultado: ");
+    bitonicSortFromBitonicSequence(numThreads, seq, tamSubparte);
+    clock_t end = clock();
+    printfArray(seq, n);
+    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
+    printf("%f\n", seconds);
+    free(seq);
+}
+
 void printfArray(int* seq, int size) {
     printf("[ %d,", seq[0]);
     for (int i = 1; i < size-1; i++)
@@ -63,49 +105,6 @@ bitonicSortFromBitonicSequence(int numThreads, int *seq, int tamSubparte) {
         }
     }
 }
-
-main() {
-    int i, j, n, numThreads, id;
-    int *seq;
-
-    n = SIZE;
-    seq = (int *) malloc (n * sizeof(int));
-    numThreads =  2;
-    tamSubparte = n / numThreads;
-
-    clock_t start = clock();
-    GeraAleatorios(seq,n,n);
-
-    /*
-        Do menor pro maior
-        9 6 7 4 4 8 7 6
-        --> <-- --> <--  1 rodada
-        6 9 7 4 4 8 7 6
-        ---->     <----  2 Rodada
-          ----> <----
-        6 4 7 9 7 8 4 6
-        --> --> <-- <-- 3 Rodada
-        Temos:
-        4 6 7 9 8 7 4 6
-             -> <-
-           -       -
-        -            -
-        Geramos duas bitonic sequence com posições:
-        pos 0 1 2 3 ascendente
-        pos 4 5 6 7 descendente
-    */
-    printf("Gerando Bitonic Sequence\nSequenciaBitonica: ");
-    bitonic_seq_Generator(tamSubparte, seq);
-    printfArray(seq, SIZE);
-    printf("Ordenando Sequencia Bitonica\nResultado: ");
-    bitonicSortFromBitonicSequence(numThreads, seq, tamSubparte);
-    clock_t end = clock();
-    printfArray(seq, n);
-    float seconds = (float)(end - start)/CLOCKS_PER_SEC;
-    printf("%f\n", seconds);
-    free(seq);
-}
-
 
 void bitonic_sort_seq(int start, int length, int *seq, int flag)
 {
