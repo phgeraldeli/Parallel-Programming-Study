@@ -6,9 +6,17 @@
 #define DOWN 1
 #define SIZE 1024
 
+void swap(int *a, int *b);
+void printfArray(int* seq, int size);
+void GeraAleatorios(int numero[], int quantNumeros, int Limite);
+void bitonic_seq_Generator(int tamSubparte, int* seq);
+void bitonicSortFromBitonicSequence(int numThreads, int *seq, int tamSubparte);
+void bitonic_sort_seq(int start, int length, int *seq, int flag);
+void bitonic_sort_par(int start, int length, int *seq, int flag);
+
 int tamSubparte;
 
-main() {
+int main() {
     int i, j, n, numThreads, id;
     int *seq;
 
@@ -84,7 +92,7 @@ void bitonic_seq_Generator(int tamSubparte, int* seq) {
     }
 }
 
-bitonicSortFromBitonicSequence(int numThreads, int *seq, int tamSubparte) {
+void bitonicSortFromBitonicSequence(int numThreads, int *seq, int tamSubparte) {
     int i,j;
     for (i = 2; i <= numThreads; i = 2 * i)
     {
