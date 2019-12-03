@@ -46,13 +46,13 @@ int main() {
         pos 0 1 2 3 ascendente
         pos 4 5 6 7 descendente
     */
-    printf("Gerando Bitonic Sequence\nSequenciaBitonica: ");
+    //printf("Gerando Bitonic Sequence\nSequenciaBitonica: ");
     bitonic_seq_Generator(tamSubparte, seq);
-    printfArray(seq, SIZE);
-    printf("Ordenando Sequencia Bitonica\nResultado: ");
+    //printfArray(seq, SIZE);
+    //printf("Ordenando Sequencia Bitonica\nResultado: ");
     bitonicSortFromBitonicSequence(numThreads, seq, tamSubparte);
     clock_t end = clock();
-    printfArray(seq, n);
+    //printfArray(seq, n);
     float seconds = (float)(end - start)/CLOCKS_PER_SEC;
     printf("%f\n", seconds);
     free(seq);
